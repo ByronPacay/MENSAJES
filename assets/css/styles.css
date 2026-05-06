@@ -1,0 +1,1003 @@
+/*
+|--------------------------------------------------------------------------
+| Variables globales y temas
+|--------------------------------------------------------------------------
+| Este bloque define la paleta principal del sistema y permite alternar
+| entre modo oscuro y modo claro sin duplicar toda la hoja de estilos.
+*/
+:root {
+    --primary: #007aff;
+    --primary-strong: #005fd1;
+    --secondary: #ff9500;
+    --secondary-strong: #cc7500;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --text-main: #edf4ff;
+    --text-soft: #a9b7cf;
+    --text-inverse: #07101c;
+    --body-bg:
+        radial-gradient(circle at top left, rgba(0, 122, 255, 0.2), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(255, 149, 0, 0.22), transparent 28%),
+        linear-gradient(145deg, #06101d 0%, #101a2e 45%, #121826 100%);
+    --surface: rgba(13, 22, 39, 0.82);
+    --surface-strong: rgba(7, 16, 29, 0.92);
+    --surface-soft: rgba(255, 255, 255, 0.06);
+    --surface-muted: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.1);
+    --shadow-xl: 0 28px 70px rgba(0, 0, 0, 0.32);
+    --shadow-md: 0 18px 38px rgba(0, 0, 0, 0.18);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+}
+
+body[data-theme="light"] {
+    --text-main: #14253d;
+    --text-soft: #5e6b80;
+    --text-inverse: #f5f9ff;
+    --body-bg:
+        radial-gradient(circle at top left, rgba(0, 122, 255, 0.15), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(255, 149, 0, 0.15), transparent 30%),
+        linear-gradient(155deg, #eef5ff 0%, #f8fbff 48%, #eef3fb 100%);
+    --surface: rgba(255, 255, 255, 0.88);
+    --surface-strong: rgba(255, 255, 255, 0.96);
+    --surface-soft: rgba(20, 37, 61, 0.06);
+    --surface-muted: rgba(20, 37, 61, 0.04);
+    --border: rgba(20, 37, 61, 0.1);
+    --shadow-xl: 0 24px 58px rgba(31, 53, 89, 0.14);
+    --shadow-md: 0 12px 30px rgba(31, 53, 89, 0.12);
+}
+
+/* Ajustes base para una renderizacion consistente. */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    font-family: "Outfit", sans-serif;
+    background: var(--body-bg);
+    color: var(--text-main);
+}
+
+body {
+    position: relative;
+    overflow-x: hidden;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+input,
+textarea {
+    color: var(--text-main);
+}
+
+img,
+video {
+    max-width: 100%;
+    display: block;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Esferas decorativas de fondo para dar atmosfera a la interfaz. */
+.bg-orb {
+    position: fixed;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    filter: blur(18px);
+    opacity: 0.32;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.orb-one {
+    top: -70px;
+    right: -70px;
+    background: var(--primary);
+}
+
+.orb-two {
+    bottom: -120px;
+    left: -60px;
+    background: var(--secondary);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Componentes reutilizables
+|--------------------------------------------------------------------------
+| Se usan tanto en la portada como en el chat para mantener una identidad
+| visual consistente.
+*/
+.app-header {
+    position: relative;
+    z-index: 2;
+    width: min(1380px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 1.2rem 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.brand-block {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.brand-kicker {
+    color: var(--secondary);
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.brand-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.header-actions,
+.contact-actions,
+.composer-tools,
+.message-actions,
+.profile-row,
+.contact-heading,
+.user-meta-row,
+.user-line {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.header-actions,
+.contact-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.auth-hero,
+.auth-panel,
+.sidebar-card,
+.conversation-panel {
+    backdrop-filter: blur(18px);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-xl);
+}
+
+.primary-button,
+.ghost-button,
+.text-button,
+.mini-button,
+.tab-button,
+.emoji-item {
+    border: 0;
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.primary-button:hover,
+.ghost-button:hover,
+.text-button:hover,
+.mini-button:hover,
+.tab-button:hover,
+.emoji-item:hover {
+    transform: translateY(-1px);
+}
+
+.primary-button {
+    padding: 0.95rem 1.2rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 16px 34px rgba(0, 122, 255, 0.22);
+}
+
+.primary-button:disabled,
+.ghost-button:disabled,
+.mini-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.ghost-button,
+.mini-button,
+.tab-button {
+    background: var(--surface-soft);
+    color: var(--text-main);
+    border-radius: 999px;
+}
+
+.ghost-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border);
+}
+
+.compact-button {
+    padding: 0.75rem 0.95rem;
+}
+
+.text-button {
+    padding: 0;
+    background: transparent;
+    color: var(--secondary);
+    font-weight: 600;
+}
+
+.mini-button {
+    padding: 0.42rem 0.75rem;
+    font-size: 0.84rem;
+    border: 1px solid transparent;
+}
+
+.mini-button.danger,
+.danger-text {
+    color: #fca5a5;
+}
+
+.subtle-button {
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-strong));
+    box-shadow: 0 16px 34px rgba(255, 149, 0, 0.22);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255, 149, 0, 0.14);
+    color: var(--secondary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.theme-button {
+    min-width: 120px;
+}
+
+.search-field,
+.auth-form label,
+.composer-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.search-field span,
+.auth-form span,
+.composer-field span {
+    color: var(--text-soft);
+    font-size: 0.9rem;
+}
+
+.search-field input,
+.auth-form input,
+.composer textarea {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    outline: none;
+}
+
+.search-field input:focus,
+.auth-form input:focus,
+.composer textarea:focus {
+    border-color: rgba(0, 122, 255, 0.45);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
+}
+
+.search-field input::placeholder,
+.auth-form input::placeholder,
+.composer textarea::placeholder {
+    color: var(--text-soft);
+}
+
+.avatar-shell {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #ffffff;
+    flex: 0 0 auto;
+}
+
+.accent-avatar {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.neutral-avatar {
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.3), rgba(255, 149, 0, 0.3));
+}
+
+.large-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    font-size: 1.15rem;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+}
+
+.status-dot.online {
+    background: var(--success);
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.16);
+}
+
+.status-dot.offline {
+    background: rgba(128, 142, 166, 0.75);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Portada de autenticacion
+|--------------------------------------------------------------------------
+| Organiza la pagina inicial con un hero descriptivo y formularios de acceso.
+*/
+.auth-header {
+    padding-top: 1.4rem;
+}
+
+.auth-shell {
+    position: relative;
+    z-index: 1;
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 2rem 0;
+    min-height: calc(100vh - 88px);
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.auth-hero {
+    padding: 2.6rem;
+    border-radius: var(--radius-xl);
+    background: linear-gradient(180deg, var(--surface), var(--surface-strong));
+}
+
+.auth-hero h1 {
+    margin: 1rem 0 0.9rem;
+    font-size: clamp(2.4rem, 5vw, 4.4rem);
+    line-height: 0.96;
+}
+
+.auth-hero p {
+    margin: 0;
+    max-width: 640px;
+    color: var(--text-soft);
+    font-size: 1.02rem;
+    line-height: 1.75;
+}
+
+.feature-grid {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.feature-card {
+    padding: 1.15rem;
+    border-radius: var(--radius-lg);
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+}
+
+.feature-card h2 {
+    margin: 0 0 0.55rem;
+    font-size: 1rem;
+}
+
+.feature-card p {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--text-soft);
+}
+
+.auth-panel {
+    padding: 1.5rem;
+    border-radius: var(--radius-xl);
+    background: linear-gradient(180deg, var(--surface), var(--surface-strong));
+}
+
+.panel-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.tab-button {
+    padding: 0.95rem 1rem;
+    color: var(--text-soft);
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.tab-button.active {
+    background: rgba(0, 122, 255, 0.14);
+    color: var(--primary);
+    border-color: rgba(0, 122, 255, 0.2);
+}
+
+.panel-content {
+    min-height: 445px;
+}
+
+.auth-form {
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.auth-form.active {
+    display: flex;
+}
+
+.auth-form h2 {
+    margin: 0.45rem 0 0.2rem;
+    font-size: 1.65rem;
+}
+
+.auth-form p {
+    margin: 0 0 0.5rem;
+    color: var(--text-soft);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Layout principal del chat
+|--------------------------------------------------------------------------
+| Crea la composicion de dos columnas con sidebar de contactos y area de
+| conversacion principal.
+*/
+.chat-shell {
+    position: relative;
+    z-index: 1;
+    width: min(1380px, calc(100% - 2rem));
+    margin: 0 auto;
+    min-height: 100vh;
+    padding: 1rem 0 1.4rem;
+}
+
+.chat-header {
+    width: 100%;
+    padding-top: 0.3rem;
+}
+
+.workspace-grid {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: 370px minmax(0, 1fr);
+    gap: 1.1rem;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.sidebar-card,
+.conversation-panel {
+    background: linear-gradient(180deg, var(--surface), var(--surface-strong));
+    border-radius: var(--radius-xl);
+}
+
+.sidebar-card {
+    padding: 1.15rem;
+}
+
+.profile-row {
+    align-items: flex-start;
+}
+
+.profile-card h1,
+.conversation-header h2 {
+    margin: 0.55rem 0 0.2rem;
+}
+
+.profile-card p,
+.conversation-header p,
+.profile-copy {
+    margin: 0;
+    color: var(--text-soft);
+}
+
+.profile-copy {
+    margin-top: 1rem;
+    line-height: 1.65;
+}
+
+.contacts-card {
+    display: grid;
+    gap: 1rem;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-size: 1.08rem;
+}
+
+.users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    min-height: 200px;
+    max-height: calc(100vh - 330px);
+    overflow-y: auto;
+    padding-right: 0.15rem;
+}
+
+.user-item {
+    width: 100%;
+    padding: 0.95rem;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    text-align: left;
+    display: grid;
+    gap: 0.6rem;
+}
+
+.user-item.active {
+    border-color: rgba(0, 122, 255, 0.28);
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.12), rgba(255, 149, 0, 0.12));
+}
+
+.user-item.is-blocked {
+    opacity: 0.86;
+}
+
+.user-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.user-main {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    min-width: 0;
+}
+
+.user-copy {
+    min-width: 0;
+    display: grid;
+    gap: 0.22rem;
+}
+
+.user-copy strong,
+.user-copy span,
+.user-copy small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-copy span,
+.user-copy small {
+    color: var(--text-soft);
+}
+
+.timestamp-pill,
+.message-timestamp,
+.delivery-state {
+    color: var(--text-soft);
+    font-size: 0.78rem;
+}
+
+.timestamp-pill {
+    white-space: nowrap;
+}
+
+.unread-badge {
+    min-width: 22px;
+    height: 22px;
+    padding: 0 0.45rem;
+    border-radius: 999px;
+    background: var(--primary);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+
+.contact-flag {
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    background: rgba(255, 149, 0, 0.12);
+    color: var(--secondary);
+}
+
+.conversation-panel {
+    padding: 1.2rem;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto auto;
+    gap: 1rem;
+}
+
+.conversation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-bottom: 0.95rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.contact-heading {
+    min-width: 0;
+    align-items: flex-start;
+}
+
+.contact-heading .avatar-shell {
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    font-size: 1.1rem;
+}
+
+.contact-heading h2 {
+    font-size: clamp(1.35rem, 2vw, 1.75rem);
+}
+
+.messages-container {
+    min-height: 430px;
+    max-height: calc(100vh - 350px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.95rem;
+    padding-right: 0.2rem;
+}
+
+.empty-state,
+.empty-users {
+    padding: 1.35rem;
+    border-radius: 18px;
+    background: var(--surface-soft);
+    border: 1px dashed var(--border);
+    color: var(--text-soft);
+}
+
+.empty-state h3 {
+    margin: 0 0 0.45rem;
+    color: var(--text-main);
+}
+
+.message-bubble {
+    max-width: min(78%, 760px);
+    padding: 1rem 1rem 0.9rem;
+    border-radius: 26px;
+    display: grid;
+    gap: 0.75rem;
+    animation: revealMessage 0.22s ease;
+    box-shadow: var(--shadow-md);
+}
+
+.message-bubble.own {
+    align-self: flex-end;
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.23), rgba(0, 95, 209, 0.2));
+    border: 1px solid rgba(0, 122, 255, 0.26);
+}
+
+.message-bubble.foreign {
+    align-self: flex-start;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+}
+
+.message-reply-snippet {
+    padding: 0.8rem 0.9rem;
+    border-radius: 16px;
+    background: rgba(255, 149, 0, 0.12);
+    border-left: 4px solid var(--secondary);
+    display: grid;
+    gap: 0.25rem;
+}
+
+.message-reply-snippet strong {
+    font-size: 0.86rem;
+}
+
+.message-reply-snippet p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-soft);
+}
+
+.message-text {
+    margin: 0;
+    line-height: 1.72;
+    white-space: pre-wrap;
+}
+
+.message-attachments,
+.file-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+}
+
+.attachment-card,
+.file-preview-card {
+    padding: 0.75rem;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--surface-muted);
+    display: grid;
+    gap: 0.65rem;
+}
+
+.attachment-card audio,
+.file-preview-card audio {
+    width: 100%;
+}
+
+.attachment-media {
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.12);
+}
+
+.attachment-caption,
+.file-preview-meta {
+    display: grid;
+    gap: 0.25rem;
+    font-size: 0.84rem;
+}
+
+.attachment-caption span,
+.file-preview-meta span {
+    color: var(--text-soft);
+}
+
+.message-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+}
+
+.message-meta-left,
+.message-meta-right {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+}
+
+.delivery-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.reply-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(255, 149, 0, 0.18);
+    border-radius: 18px;
+    background: rgba(255, 149, 0, 0.08);
+}
+
+.reply-bar-copy {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.reply-bar-copy p {
+    margin: 0;
+    color: var(--text-soft);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-preview-grid {
+    margin-top: -0.2rem;
+}
+
+.remove-file-button {
+    justify-self: flex-start;
+}
+
+.composer {
+    padding-top: 0.95rem;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.composer-tools {
+    position: relative;
+    flex-wrap: wrap;
+    align-self: stretch;
+    align-content: flex-start;
+}
+
+.tool-button {
+    border: 1px solid var(--border);
+}
+
+.emoji-picker {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    padding: 0.75rem;
+    width: 168px;
+    border-radius: 18px;
+    background: var(--surface-strong);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+}
+
+.emoji-item {
+    padding: 0.55rem;
+    border-radius: 12px;
+    background: var(--surface-soft);
+    font-size: 1.1rem;
+}
+
+.composer textarea {
+    min-height: 108px;
+    resize: vertical;
+}
+
+/* Animacion breve para los mensajes nuevos. */
+@keyframes revealMessage {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| Responsive
+|--------------------------------------------------------------------------
+| Ajusta el layout para tabletas y telefonos manteniendo la experiencia
+| de dos paneles de forma flexible.
+*/
+@media (max-width: 1160px) {
+    .workspace-grid {
+        grid-template-columns: 320px minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 980px) {
+    .app-header,
+    .auth-shell,
+    .chat-shell {
+        width: min(100% - 1rem, 100%);
+    }
+
+    .auth-shell,
+    .workspace-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .users-list,
+    .messages-container {
+        max-height: none;
+    }
+
+    .composer {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .app-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .header-actions,
+    .contact-actions {
+        justify-content: flex-start;
+    }
+
+    .auth-shell,
+    .chat-shell {
+        padding-bottom: 1rem;
+    }
+
+    .auth-hero,
+    .auth-panel,
+    .sidebar-card,
+    .conversation-panel {
+        padding: 1rem;
+        border-radius: 22px;
+    }
+
+    .conversation-header,
+    .reply-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .message-bubble {
+        max-width: 100%;
+    }
+
+    .message-attachments,
+    .file-preview-grid {
+        grid-template-columns: 1fr;
+    }
+}

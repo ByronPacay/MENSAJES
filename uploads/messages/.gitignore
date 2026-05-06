@@ -1,0 +1,3 @@
+# Mantener la carpeta de adjuntos en el repositorio sin versionar archivos cargados.
+*
+!.gitignore

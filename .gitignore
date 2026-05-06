@@ -1,0 +1,11 @@
+# Archivos temporales comunes de Windows y editores.
+Thumbs.db
+Desktop.ini
+.vscode/
+
+# Dependencias o carpetas que podrian agregarse despues.
+node_modules/
+vendor/
+
+# Archivos de registro temporales.
+*.log
