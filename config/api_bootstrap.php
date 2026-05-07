@@ -1,5 +1,20 @@
 <?php
 
+// Configurar manejo agresivo de errores
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Capturar cualquier error fatal o warning y convertirlo a JSON
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    http_response_code(500);
+    header("Content-Type: application/json; charset=utf-8");
+    echo json_encode([
+        "ok" => false,
+        "message" => "Error: $errstr en $errfile línea $errline"
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+});
+
 // Cargar sesion y conexion para los endpoints que responden JSON.
 require_once __DIR__ . "/session.php";
 require_once __DIR__ . "/conexion.php";

@@ -1,7 +1,9 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Bloque de configuracion principal para conectarse a MySQL.
-$Servidor = "localhost";
+$Servidor = "192.168.50.145";
 //$Usuario = "root";
 //$password = "";
 
@@ -18,7 +20,13 @@ $conn->set_charset("utf8mb4");
 
 // Verificar conexion antes de continuar con cualquier operacion.
 if ($conn->connect_error) {
-    die("Conexion fallida: " . $conn->connect_error);
+    http_response_code(500);
+    header("Content-Type: application/json; charset=utf-8");
+    echo json_encode([
+        "ok" => false,
+        "message" => "Error de conexión a la base de datos: " . $conn->connect_error
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
 }
 
 /*
