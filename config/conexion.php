@@ -2,8 +2,12 @@
 
 // Bloque de configuracion principal para conectarse a MySQL.
 $Servidor = "localhost";
-$Usuario = "root";
-$password = "";
+//$Usuario = "root";
+//$password = "";
+
+$Usuario = "byron";
+$password = "contraseña";
+
 $BaseDeDatos = "bd_mensajeria";
 
 // Crear conexion reutilizable para todos los scripts del sistema.

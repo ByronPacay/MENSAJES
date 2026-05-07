@@ -1,7 +1,9 @@
 -- Crear la base de datos del sistema de mensajeria.
-CREATE DATABASE IF NOT EXISTS bd_mensajeria
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_general_ci;
+-- Si tu servidor no te permite crear bases de datos, comenta estas lineas
+-- y usa directamente: USE nombre_de_tu_base_existente;
+-- CREATE DATABASE IF NOT EXISTS bd_mensajeria
+-- CHARACTER SET utf8mb4
+-- COLLATE utf8mb4_general_ci;
 
 USE bd_mensajeria;
 
@@ -11,13 +13,10 @@ CREATE TABLE IF NOT EXISTS usuarios_mensajeria (
     nombre VARCHAR(100) NOT NULL,
     username VARCHAR(50) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    bio VARCHAR(160) NULL DEFAULT 'Disponible para chatear.',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_seen_at DATETIME NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
-
--- Agregar columnas auxiliares para presencia y perfil basico.
-ALTER TABLE usuarios_mensajeria
-    ADD COLUMN IF NOT EXISTS bio VARCHAR(160) NULL DEFAULT 'Disponible para chatear.' AFTER password_hash,
-    ADD COLUMN IF NOT EXISTS last_seen_at DATETIME NULL DEFAULT CURRENT_TIMESTAMP AFTER created_at;
 
 -- Tabla de contactos personales con soporte para bloqueo.
 CREATE TABLE IF NOT EXISTS contactos_mensajeria (
@@ -44,8 +43,11 @@ CREATE TABLE IF NOT EXISTS mensajes_mensajeria (
     remitente_id INT NOT NULL,
     destinatario_id INT NOT NULL,
     mensaje TEXT NOT NULL,
+    reply_to_message_id INT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    delivered_at DATETIME NULL DEFAULT NULL,
+    read_at DATETIME NULL DEFAULT NULL,
     INDEX idx_mensajes_conversacion (remitente_id, destinatario_id, created_at),
     CONSTRAINT fk_mensajes_remitente
         FOREIGN KEY (remitente_id) REFERENCES usuarios_mensajeria(id)
@@ -54,12 +56,6 @@ CREATE TABLE IF NOT EXISTS mensajes_mensajeria (
         FOREIGN KEY (destinatario_id) REFERENCES usuarios_mensajeria(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
-
--- Agregar columnas para reply y estados de entrega/lectura.
-ALTER TABLE mensajes_mensajeria
-    ADD COLUMN IF NOT EXISTS reply_to_message_id INT NULL AFTER mensaje,
-    ADD COLUMN IF NOT EXISTS delivered_at DATETIME NULL DEFAULT NULL AFTER updated_at,
-    ADD COLUMN IF NOT EXISTS read_at DATETIME NULL DEFAULT NULL AFTER delivered_at;
 
 -- Tabla de adjuntos multimedia por mensaje.
 CREATE TABLE IF NOT EXISTS adjuntos_mensajeria (

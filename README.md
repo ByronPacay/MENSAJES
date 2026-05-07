@@ -34,7 +34,7 @@ Proyecto web desarrollado con PHP, HTML, CSS, JavaScript y MySQL para gestionar 
 - `logout.php`: cierre de sesion.
 - `config/conexion.php`: conexion reutilizable a MySQL.
 - `api/`: endpoints para autenticacion y CRUD.
-- `database/bd_usuarios.sql`: script para crear la base de datos y sus tablas (usa `bd_mensajeria`).
+- `database/bd_mensajeria.sql`: script para crear la base de datos y sus tablas.
 - `uploads/messages/`: carpeta donde se almacenan los adjuntos multimedia.
 
 Nota: el proyecto usa las tablas `usuarios_mensajeria`, `contactos_mensajeria`, `mensajes_mensajeria` y `adjuntos_mensajeria` para evitar conflictos con otras tablas preexistentes dentro de `bd_mensajeria`.
@@ -43,7 +43,7 @@ Nota: el proyecto usa las tablas `usuarios_mensajeria`, `contactos_mensajeria`, 
 
 1. Copiar la carpeta del proyecto dentro de `C:\xampp\htdocs\`.
 2. Iniciar Apache y MySQL desde el panel de XAMPP.
-3. Importar el archivo `database/bd_usuarios.sql` en phpMyAdmin o con consola (crea `bd_mensajeria`).
+3. Importar el archivo `database/bd_mensajeria.sql` en phpMyAdmin o con consola.
 4. Abrir en el navegador:
 
 ```text
@@ -53,8 +53,10 @@ http://localhost/MENSAJES/
 ## Importar la base de datos por consola
 
 ```powershell
-C:\xampp\mysql\bin\mysql.exe -u root < C:\xampp\htdocs\MENSAJES\database\bd_usuarios.sql
+C:\xampp\mysql\bin\mysql.exe -u root < C:\xampp\htdocs\MENSAJES\database\bd_mensajeria.sql
 ```
+
+Si tu servidor no te permite `CREATE DATABASE`, abre `database/bd_mensajeria.sql`, comenta las lineas de `CREATE DATABASE` y `USE`, y cambia `config/conexion.php` para apuntar a una base que tu usuario ya tenga autorizada.
 
 ## Publicar en GitHub
 

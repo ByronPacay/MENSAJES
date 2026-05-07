@@ -24,7 +24,16 @@ async function sendForm(endpoint, formData) {
         body: formData,
     });
 
-    const data = await response.json();
+    const rawText = await response.text();
+    let data = null;
+
+    try {
+        data = JSON.parse(rawText);
+    } catch (error) {
+        throw new Error(
+            "El servidor no devolvio un JSON valido. Revisa la conexion a la base de datos, que exista bd_mensajeria y que sus tablas esten importadas."
+        );
+    }
 
     if (!response.ok || !data.ok) {
         throw new Error(data.message || "Ocurrio un error inesperado.");
